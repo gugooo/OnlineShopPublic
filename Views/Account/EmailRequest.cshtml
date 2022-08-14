@@ -1,0 +1,20 @@
+﻿@{
+    Layout = null;
+    string Culture = (string)ViewBag.culture;
+    string message = (string)ViewBag.message;
+    string img = (string)ViewBag.imgId;
+}
+<div style="min-width:400px;">
+    <div class="messageHeader" style="min-height: 100px;text-align: center;">
+        <a href="https://www.alcantara.am"><img src="cid:@img" height="50" /></a>
+        <div style="background-color: rgb(19,46,109);min-height: 50px;line-height: 50px;">
+        </div>
+    </div>
+    <div style="min-height:150px;padding:30px 10px; text-align:center;">
+        @Html.Raw(message)
+    </div>
+    <div style="background-color: rgb(19,46,109);height: 50px;line-height: 50px; text-align:center;">
+        <a style="color: rgb(255,255,255); padding:0 10px;" href="https://www.alcantara.am/Home/About">About Alcantara</a>
+        <a style="color: rgb(255,255,255); padding:0 10px;" href="https://www.alcantara.am/Home/Contact">Contact us</a>
+    </div>
+</div>

@@ -1,0 +1,477 @@
+﻿@{
+    ViewData["Title"] = Localizer["Home Page"];
+}
+@using System.Globalization;
+@{
+    List<HomePageSection> _Model = (List<HomePageSection>)ViewBag._Model;
+    IEnumerable<Product> Sec2_Products = (IEnumerable<Product>)ViewBag.Sec2_Products;
+    IEnumerable<Product> Sec4_Products = (IEnumerable<Product>)ViewBag.Sec4_Products;
+}
+@{
+    HomePageSection s1 = null, s2 = null, s3 = null, s4 = null, s5 = null;
+    if (_Model != null && _Model.Count() == 5)
+    {
+        s1 = _Model.FirstOrDefault(_ => _.SectionName == "Section 1");
+        s2 = _Model.FirstOrDefault(_ => _.SectionName == "Section 2");
+        s3 = _Model.FirstOrDefault(_ => _.SectionName == "Section 3");
+        s4 = _Model.FirstOrDefault(_ => _.SectionName == "Section 4");
+        s5 = _Model.FirstOrDefault(_ => _.SectionName == "Section 5");
+    }
+}
+@if (s1 != null && s1.IsActive && s1.HomePageSectionDatas != null && s1.HomePageSectionDatas.Count() > 0)//Section 1
+{
+    <section class="banner pos-r p-0">
+
+        <div class="banner-slider owl-carousel no-pb owl-2" data-dots="false" data-nav="true">
+            @for (int i = 0; i < s1.HomePageSectionDatas.Count(); i++)
+            {
+                var s1d = s1.HomePageSectionDatas.ElementAt(i);
+                <div class="item bg-pos-rt" data-bg-img="@Url.Action("GetIndexImg","Home",new {id= s1d.Id})">
+                    <div class="container h-100">
+                        <div class="row h-100 align-items-center">
+                            <div class="col-lg-7 col-md-12 custom-py-1 position-relative z-index-1">
+                                <h6 class="font-w-6 text-primary animated3">@CultureData.GetDefoultName(s1d.Title, (string)ViewBag.Culture)</h6>
+                                <h1 class="mb-4 animated3">@CultureData.GetDefoultName(s1d.Description, (string)ViewBag.Culture)</h1>
+                                <div class="animated3">
+                                    <a class="btn btn-primary btn-animated" asp-controller="Home" asp-action="Products" asp-route-id="@s1d.Catalog?.Id">@Localizer["Shop Now"]</a>
+                                </div>
+                                <div class="hero-circle animated4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+<div class="page-content" id="productList">
+    <section class="pb-0">
+        <div class="container">
+            <div class="row my-4">
+                <div class="col-lg-3 col-sm-6">
+                    <div class="d-flex">
+                        <div class="mr-2">
+                            <i class="las la-truck ic-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">@Localizer["Fast Shipping"]</h5>
+                            <p class="mb-0 d-none">@Localizer["Writing result-oriented"]</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 mt-3 mt-sm-0">
+                    <div class="d-flex">
+                        <div class="mr-2">
+                            <i class="las la-hand-holding-usd ic-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">@Localizer["Money Return"]</h5>
+                            <p class="mb-0 d-none">@Localizer["Writing result-oriented"]</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 mt-3 mt-lg-0">
+                    <div class="d-flex">
+                        <div class="mr-2">
+                            <i class="las la-lock ic-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">@Localizer["Secure Payment"]</h5>
+                            <p class="mb-0 d-none">@Localizer["Writing result-oriented"]</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 mt-3 mt-lg-0">
+                    <div class="d-flex">
+                        <div class="mr-2">
+                            <i class="las la-headset ic-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">@Localizer["24/7 Support"]</h5>
+                            <p class="mb-0 d-none">@Localizer["Writing result-oriented"]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    @if (s2 != null && s2.IsActive && s2.HomePageSectionDatas != null && s2.HomePageSectionDatas.Count() > 0 && Sec2_Products != null && Sec2_Products.Count() > 0)//Section 2
+    {
+        var s2d = s2.HomePageSectionDatas.ElementAt(0);
+        <section class="py-5" style="background-color: #f1f1f1;">
+            <div class="container-fluid px-lg-8">
+                <div class="row justify-content-center text-center">
+                    <div class="col-lg-8 col-md-10">
+                        <div>
+                            <h6 class="text-primary mb-1">
+                                @CultureData.GetDefoultName(s2d.Title, (string)ViewBag.Culture)
+                            </h6>
+                            <h2 class="mb-0">@CultureData.GetDefoultName(s2d.Description, (string)ViewBag.Culture)</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row HeartSection QVLissener">
+                    @for (int i = 0; i < Sec2_Products.Count(); i++)
+                    {
+                        var pr = Sec2_Products.ElementAt(i);
+                        var prType = pr.ProductTypes?.FirstOrDefault(_ => _.IsMine);
+                        var imgs = prType?.Images?.OrderBy(_ => _.Id);
+                        int? imgId1 = imgs?.FirstOrDefault()?.Id;
+                        int? imgId2 = imgs?.ElementAtOrDefault(1)?.Id;
+                        if (imgId2 == null && imgId1 != null) { imgId2 = imgId1; }
+                        string Price = prType?.Price.ToString("N", new CultureInfo("en")).Replace(".00", String.Empty);
+                        string Sale = prType?.Sale.ToString("N", new CultureInfo("en")).Replace(".00", String.Empty);
+                        <div class="col-xl-3 col-lg-4 col-md-6 mt-8">
+                            <div class="card product-card ProductWrapper" data-id="@pr.Id">
+                                <button class="btn-wishlist btn-sm Heart" type="button" data-toggle="tooltip" data-placement="left" title="@Localizer["Add to wishlist"]">
+                                    <i class="lar la-heart"></i>
+                                </button>
+                                <a class="card-img-hover d-block" asp-action="Product" asp-controller="Home" asp-route-id="@pr.Id">
+                                    <img class="card-img-top card-img-back" src="@(imgId1==null?"//:0": Url.Action("GetProductImg","Home",new {id=imgId1 }))" alt="...">
+                                    <img class="card-img-top card-img-front" src="@(imgId2==null?"//:0": Url.Action("GetProductImg","Home",new {id=imgId2 }))" alt="...">
+                                </a>
+                                <div class="card-info">
+                                    <div class="card-body">
+                                        <div class="product-title">
+                                            <a class="link-title" asp-action="Product" asp-controller="Home" asp-route-id="@pr.Id">@Html.Raw(CultureData.GetDefoultName(prType?.CultureTitle, (string)ViewBag.Culture))</a>
+                                        </div>
+                                        <div class="mt-1">
+                                            @if (string.IsNullOrEmpty(Sale) || Sale == "0")
+                                            {
+                                                <span class="product-price">@(Price) <small>@(ViewBag.amd ?? "")</small></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="product-price"><del class="text-muted">@(Price)</del> @(Sale) <small>@(ViewBag.amd ?? "")</small></span>
+                                            }
+                                            <div class="star-rating">
+                                                @if (pr.Reviews != null && pr.Reviews.Count() > 0)
+                                                {
+                                                    for (int r = 0; r < 5; r++)
+                                                    {
+                                                        if (r < pr.Reviews.Average(_ => _.Rating))
+                                                        {
+                                                            <i class="las la-star font-weight-light"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="las la-star"></i>
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <i class="las la-star font-weight-light"></i><i class="las la-star font-weight-light"></i><i class="las la-star font-weight-light"></i><i class="las la-star font-weight-light"></i><i class="las la-star font-weight-light"></i>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <div class="product-link d-flex align-items-center justify-content-center">
+                                            <a class="btn btn-compare" asp-controller="Home" asp-action="Checkout" asp-route-id="@pr.Id">
+                                               @Localizer["Buy Now"]
+                                            </a>
+                                            <button class="btn-cart btn btn-primary btn-animated mx-3" type="button" onclick="addToCart(this)">
+                                                <i class="las la-shopping-cart mr-1"></i>
+                                            </button>
+                                            <button class="btn btn-view qv" data-toggle="tooltip" data-placement="top" title="@Localizer["Quick View"]" data-id="@pr.Id">
+                                                <span data-target="#quick-view" data-toggle="modal"><i class="las la-eye"></i></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+    @if (s3 != null && s3.IsActive && s3.HomePageSectionDatas != null && s3.HomePageSectionDatas.Count() > 0)//Section 3
+    {
+        var s3d = s3.HomePageSectionDatas.ElementAt(0);
+        <section class="p-0">
+            <div class="container-fluid pl-0">
+                <div class="row">
+                    <div class="col-md-6 col-sm-5 parallaxie custom-py-3 rounded" data-bg-img="@Url.Action("GetIndexImg","Home",new {id= s3d.Id})"></div>
+                    <div class="col-md-6 col-sm-7 py-sm-0 py-5">
+                        <div class="pl-lg-6 pr-lg-8 p-2 pt-sm-10">
+                            <span class="bg-primary py-1 px-2 d-inline-block rounded mb-3 text-white text-uppercase">@CultureData.GetDefoultName(s3d.Title, (string)ViewBag.Culture)</span>
+                            <h2 class="mb-5 font-w-5 line-h-1">@CultureData.GetDefoultName(s3d.Description, (string)ViewBag.Culture)</h2>
+                            <ul class="countdown list-inline d-flex" data-countdown="2020/09/23"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+    @if (s4 != null && s4.IsActive && s4.HomePageSectionDatas != null && s4.HomePageSectionDatas.Count() > 0 && Sec4_Products != null && Sec4_Products.Count() > 0)//Section 4
+    {
+        var s4d = s2.HomePageSectionDatas.ElementAt(0);
+        <section class="tab p-0 mt-n15">
+            <div class="container-fluid pr-sm-0">
+                <div class="row">
+                    <div class="col-lg-10 col-md-11 ml-auto">
+                        <div class="shadow p-sm-8 p-3 bg-white">
+                            <div class="row align-items-end mb-6">
+                                <div class="col-lg-6">
+                                    <div>
+                                        <h6 class="text-primary mb-1">
+                                            @Html.Raw(CultureData.GetDefoultName(s4d.Title, (string)ViewBag.Culture))
+                                        </h6>
+                                        <h2 class="mb-0">@Html.Raw(CultureData.GetDefoultName(s4d.Description, (string)ViewBag.Culture))</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 text-lg-right mt-4 mt-lg-0 d-none">
+                                    <nav>
+                                        <div class="nav nav-tabs d-inline-block justify-content-md-end" id="nav-tab" role="tablist">
+                                            <a class="nav-item nav-link active" id="nav-tab1" data-toggle="tab" href="index.html#tab1-1" role="tab" aria-selected="true">Top Rated</a>
+                                            <a class="nav-item nav-link" id="nav-tab2" data-toggle="tab" href="index.html#tab1-2" role="tab" aria-selected="false">New Product</a>
+                                            <a class="nav-item nav-link" id="nav-tab3" data-toggle="tab" href="index.html#tab1-3" role="tab" aria-selected="false">Best Seller</a>
+                                        </div>
+                                    </nav>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="tab-content p-0" id="nav-tabContent">
+                                        <div role="tabpanel" class="tab-pane fade show active HeartSection QVLissener" id="tab1-1">
+                                            <div class="owl-carousel no-pb owl-2" data-dots="false" data-nav="true" data-items="3" data-lg-items="3" data-md-items="2" data-sm-items="1">
+                                                @for (int i = 0; i < Sec4_Products.Count(); i++)
+                                                {
+                                                    var pr = Sec4_Products.ElementAt(i);
+                                                    var prType = pr.ProductTypes?.FirstOrDefault(_ => _.IsMine);
+                                                    var imgs = prType?.Images?.OrderBy(_ => _.Id);
+                                                    int? imgId1 = imgs?.FirstOrDefault()?.Id;
+                                                    int? imgId2 = imgs?.ElementAtOrDefault(1)?.Id;
+                                                    if (imgId2 == null && imgId1 != null) { imgId2 = imgId1; }
+                                                    string Price = prType?.Price.ToString("N", new CultureInfo("en")).Replace(".00", String.Empty);
+                                                    string Sale = prType?.Sale.ToString("N", new CultureInfo("en")).Replace(".00", String.Empty);
+                                                    <div class="item">
+                                                        <div class="card product-card ProductWrapper" data-id="@pr.Id">
+                                                            <button class="btn-wishlist btn-sm Heart" type="button" data-toggle="tooltip" data-placement="left" title="@Localizer["Add to wishlist"]">
+                                                                <i class="lar la-heart"></i>
+                                                            </button>
+                                                            <a class="card-img-hover d-block" asp-action="Product" asp-controller="Home" asp-route-id="@pr.Id">
+                                                                <img class="card-img-top card-img-back" src="@(imgId1==null?"//:0": Url.Action("GetProductImg","Home",new {id=imgId1 }))" alt="...">
+                                                                <img class="card-img-top card-img-front" src="@(imgId2==null?"//:0": Url.Action("GetProductImg","Home",new {id=imgId2 }))" alt="...">
+                                                            </a>
+                                                            <div class="card-info">
+                                                                <div class="card-body">
+                                                                    <div class="product-title">
+                                                                        <a class="link-title" asp-action="Product" asp-controller="Home" asp-route-id="@pr.Id">@Html.Raw(CultureData.GetDefoultName(prType?.CultureTitle, (string)ViewBag.Culture))</a>
+                                                                    </div>
+                                                                    <div class="mt-1">
+                                                                        @if (string.IsNullOrEmpty(Sale) || Sale == "0")
+                                                                        {
+                                                                            <span class="product-price">@(Price) <small>@(ViewBag.amd ?? "")</small></span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="product-price"><del class="text-muted">@(Price)</del> @(Sale) <small>@(ViewBag.amd ?? "")</small></span>
+                                                                        }
+                                                                        <div class="star-rating">
+                                                                            @if (pr.Reviews != null && pr.Reviews.Count() > 0)
+                                                                                        {
+                                                                                var rat = pr.Reviews.Average(_ => _.Rating);
+                                                                                for (int r = 0; r < 5; r++)
+                                                                                {
+                                                                                    if (r < rat)
+                                                                                    {
+                                                                                        <i class="las la-star"></i>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <i class="las la-star font-weight-light"></i>
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <i class="las la-star font-weight-light"></i><i class="las la-star font-weight-light"></i><i class="las la-star font-weight-light"></i><i class="las la-star font-weight-light"></i><i class="las la-star font-weight-light"></i>
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card-footer bg-transparent border-0">
+                                                                    <div class="product-link d-flex align-items-center justify-content-center">
+                                                                        <a class="btn btn-compare" asp-controller="Home" asp-action="Checkout" asp-route-id="@pr.Id">
+                                                                           @Localizer["Buy Now"]
+                                                                        </a>
+                                                                        <button class="btn-cart btn btn-primary btn-animated mx-3" type="button" onclick="addToCart(this)">
+                                                                            <i class="las la-shopping-cart mr-1"></i>
+                                                                        </button>
+                                                                        <button class="btn btn-view qv" data-toggle="tooltip" data-placement="top" title="@Localizer["Quick View"]" data-id="@pr.Id">
+                                                                            <span data-target="#quick-view" data-toggle="modal"><i class="las la-eye"></i></span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+    @if (s5 != null && s5.IsActive && s5.HomePageSectionDatas != null && s5.HomePageSectionDatas.Count() == 3)//Section 5
+    {
+        var hpsd = s5.HomePageSectionDatas.OrderBy(_ => _._Index);
+        var sd1 = hpsd.ElementAt(0);
+        var sd2 = hpsd.ElementAt(1);
+        var sd3 = hpsd.ElementAt(2);
+        <section>
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12 col-md-8">
+                        <div class="position-relative rounded overflow-hidden text-right shadow-sm">
+                            <img class="img-fluid hover-zoom" src="@Url.Action("GetIndexImg","Home",new {id= sd1.Id})" alt="">
+                            <div class="position-absolute top-50 pl-5 text-left">
+                                <h6 class="text-dark">@CultureData.GetDefoultName(sd1.Title, (string)ViewBag.Culture)</h6>
+                                <h3><span class="font-w-7 text-primary d-block">@CultureData.GetDefoultName(sd1.Description, (string)ViewBag.Culture)</span></h3>
+                                <!-- Link --> <a class="btn btn-sm btn-primary btn-animated" asp-controller="Home" asp-action="Products" asp-route-id="@sd1.Catalog?.Id">
+                                    @Localizer["Shop Now"]
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 mt-5 mt-md-0">
+                        <div class="position-relative rounded overflow-hidden">
+                            <a asp-controller="Home" asp-action="Products" asp-route-id="@sd1.Catalog?.Id">
+                                <img class="img-fluid w-100 hover-zoom" src="@Url.Action("GetIndexImg","Home",new {id= sd2.Id})" alt="">
+                            </a>
+                            <div class="position-absolute top-50 pl-5">
+                                <h4 class="mb-0">@CultureData.GetDefoultName(sd2.Title, (string)ViewBag.Culture)<br> @CultureData.GetDefoultName(sd2.Description, (string)ViewBag.Culture)</h4>
+                            </div>
+
+                        </div>
+                        <div class="position-relative rounded overflow-hidden mt-5 shadow-sm">
+                            <a asp-controller="Home" asp-action="Products" asp-route-id="@sd3.Catalog?.Id">
+                                <img class="img-fluid w-100 hover-zoom" src="@Url.Action("GetIndexImg","Home",new {id= sd3.Id})" alt="">
+                            </a>
+                            <div class="position-absolute top-50 pl-5">
+                                <h4 class="mb-0">@CultureData.GetDefoultName(sd3.Title, (string)ViewBag.Culture)<br> @CultureData.GetDefoultName(sd3.Description, (string)ViewBag.Culture)</h4>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+    <section class="bg-light">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-8">
+                <div class="col-lg-6 col-md-10">
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-1">
+                            @Localizer["— Newsletter"]
+                        </h6>
+                        <h2 class="mb-0">@Localizer["Subscribe Our Newsletter"]</h2>
+                    </div>
+                    <div class="subscribe-form">
+                        <div class="row align-items-center no-gutters mb-3">
+                            <div class="col">
+                                <input id="SubscribeNewEmail" class="email form-control input-2" placeholder="@Localizer["Email Address"]" type="email">
+                            </div>
+                            <div class="col-auto">
+                                <input id="SubscribeButton" class="btn btn-primary overflow-auto" value="@Localizer["Subscribe"]" type="button">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="p-0">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap align-items-center text-center bg-white shadow">
+                        <div class="clients-logo">
+                            <img class="img-fluid" src="~/assets/images/client/01.png" alt="">
+                        </div>
+                        <div class="clients-logo">
+                            <img class="img-fluid" src="~/assets/images/client/02.png" alt="">
+                        </div>
+                        <div class="clients-logo">
+                            <img class="img-fluid" src="~/assets/images/client/03.png" alt="">
+                        </div>
+                        <div class="clients-logo">
+                            <img class="img-fluid" src="~/assets/images/client/04.png" alt="">
+                        </div>
+                        <div class="clients-logo">
+                            <img class="img-fluid" src="~/assets/images/client/05.png" alt="">
+                        </div>
+                        <div class="clients-logo">
+                            <img class="img-fluid" src="~/assets/images/client/06.png" alt="">
+                        </div>
+                        <div class="clients-logo">
+                            <img class="img-fluid" src="~/assets/images/client/07.png" alt="">
+                        </div>
+                        <div class="clients-logo">
+                            <img class="img-fluid" src="~/assets/images/client/08.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="p-0">
+        <div class="container-fluid p-0">
+            <div class="row no-gutters">
+                <div class="col-md-8 col-lg-4 order-lg-1 align-items-center d-flex justify-content-center bg-dark p-5">
+                    <div class="d-flex align-items-center">
+                        <img class="img-fluid" src="~/assets/images/insta/instagram-logo.png" alt="">
+                        <div class="ml-3">
+                            <h6 class="text-white mb-0">@Localizer["Follow Us on"]</h6>
+                            <h3 class="text-white mb-0">Instagram</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <a class="insta-item" href="#">
+                        <img class="img-fluid" src="~/assets/images/insta/01.jpg" alt="">
+                        <div class="insta-icon">
+                            <i class="lab la-instagram"></i>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <a class="insta-item" href="#">
+                        <img class="img-fluid" src="~/assets/images/insta/02.jpg" alt="">
+                        <div class="insta-icon">
+                            <i class="lab la-instagram"></i>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2 order-lg-1">
+                    <a class="insta-item" href="#">
+                        <img class="img-fluid" src="~/assets/images/insta/03.jpg" alt="">
+                        <div class="insta-icon">
+                            <i class="lab la-instagram"></i>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2 order-lg-1">
+                    <a class="insta-item" href="#">
+                        <img class="img-fluid" src="~/assets/images/insta/04.jpg" alt="">
+                        <div class="insta-icon">
+                            <i class="lab la-instagram"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Subscribe{
+}

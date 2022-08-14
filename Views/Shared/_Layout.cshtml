@@ -1,0 +1,455 @@
+﻿@using Microsoft.AspNetCore.Localization;
+@using AlcantaraNew.Classes;
+@inject IMainMenu Menu
+@{
+    string Culture = Context.Request.HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture.Culture.Name;
+    var _Menu = await Menu.GetMenu(Culture);
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="Alcantara, Online Shop, Clothes, Shoes, Electronics, Books" />
+    <meta name="description" content="Alcantara online shop" />
+    <meta name="author" content="Gurgen Arzumanyan" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@ViewData["Title"] - Alcantara</title>
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico" />
+    <link href="~/assets/css/theme-plugin.css" rel="stylesheet" />
+    <link href="~/assets/css/theme.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    @RenderSection("Style", required: false)
+</head>
+<body>
+    <div id="liveChatBtn" onclick="$('#liveChatWrap').toggleClass('d-none'); $(this).addClass('d-none');">
+        <img src="~/Icons/liveChat.jpeg" />
+    </div>
+    <div id="liveChatWrap" class="d-none">
+        <div id="abortChat" class="float-left bg-danger d-none" onclick="$(this).addClass('d-none')">&#10006;</div>
+        <div onclick="$('#liveChatBtn').removeClass('d-none'); $(liveChatWrap).addClass('d-none');" id="closeChat" class="float-right bg-warning">&#10134;</div>
+        <div class="px-4" style="margin-top:40px;" id="startChatWrap">
+            <div class="mb-2"><input id="chatName" class="form-control" type="text" placeholder="@(Localizer["Name"])" /></div>
+            <div class="mb-2"><input id="liveChatUserPhone" class="form-control" type="text" placeholder="@(Localizer["Phone"])" /></div>
+            <div class="mb-2"><input id="liveChatUserEmail" class="form-control" type="email" placeholder="@(Localizer["Email"])" /></div>
+            <div class="mb-2"><textarea style="height:145px;resize:none;" class="form-control" placeholder="@(Localizer["Message"])"></textarea></div>
+            <div class=""><button id="liveChatStart" onclick="$('#abortChat').removeClass('d-none')" class="btn btn-outline-success px-4 pDef" type="button">@(Localizer["Start chat"])</button></div>
+        </div>
+        <div class="mx-4 d-none" style="margin-top:40px;" id="messagingChatWrap">
+            <div id="messagingChat" class="ScrollStyle" style="font-size:small;">
+            </div>
+            <div>
+                <textarea id="newMessage" class="ScrollStyle p-1" placeholder="@(Localizer["Message"])"></textarea>
+                <div id="sendNewMessage">
+                    <img src="~/Icons/SendMessage.png" width="25" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-wrapper">
+        <div id="ht-preloader">
+            <div class="loader clear-loader">
+                <img class="img-fluid" src="~/assets/images/loader.gif" alt="">
+            </div>
+        </div>
+        <header class="site-header">
+            <div class="header-top bg-dark py-1">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-12 d-flex align-items-center justify-content-between text-white">
+                            <div class="d-none d-md-flex align-items-center">
+                                <small class="mr-3"><i class="las la-store text-primary mr-1 align-middle"></i>@Localizer["Welcome to Our store Alcantara"]</small>  <small><i class="las la-truck text-primary mr-1 align-middle"></i>@Localizer["Fast shipping worldwide"]</small>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="language-selection mr-2">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm text-white dropdown-toggle" data-toggle="dropdown">@(Culture == "hy" ? "AM" : Culture.ToUpper())</button>
+                                        <div class="dropdown-menu" style="min-width:1rem;">
+                                            <form asp-action="SetLanguage" asp-controller="Home" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)" method="post">
+                                                <input type="hidden" name="culture" value="@Culture" id="formCulture" />
+                                                <a href="javascript:$('#formCulture').val('en').closest('form').submit();" class="dropdown-item pl-5 pr-2" style="background-image: url(/Language/EN.jpg); background-repeat: no-repeat; background-position: 8px 11px;">EN</a>
+                                                <a href="javascript:$('#formCulture').val('ru').closest('form').submit();" class="dropdown-item pl-5 pr-2" style="background-image: url(/Language/RU.jpg); background-repeat: no-repeat; background-position: 8px 11px;">RU</a>
+                                                <a href="javascript:$('#formCulture').val('hy').closest('form').submit();" class="dropdown-item pl-5 pr-2" style="background-image: url(/Language/AM.jpg); background-repeat: no-repeat; background-position: 8px 11px;">AM</a>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="social-icons">
+                                    <ul class="list-inline mb-0">
+                                        <li class="list-inline-item">
+                                            <a class="text-muted" href="#"><i class="lab la-facebook-f"></i></a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a class="text-muted" href="#"><i class="lab la-instagram"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="py-md-3 py-2">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-6 d-none d-md-flex align-items-center">
+                            <a class="navbar-brand logo d-none d-lg-block" asp-action="Index" asp-controller="Home">
+                                <img class="img-fluid" src="~/Image/Logo.png" alt="Logo...">
+                            </a>
+                            <div class="media ml-lg-11">
+                                <i class="las la-mobile-alt ic-2x bg-white rounded p-2 shadow-sm mr-2 text-primary"></i>
+                                <div class="media-body">
+                                    <span class="mb-0 d-block">@Localizer["Call Us"]</span>
+                                    <a class="text-muted" href="tel:+37433710720"><small>+374 33 710-720</small></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="right-nav align-items-center d-flex justify-content-end">
+                                <form class="form-inline border rounded w-100" asp-action="Products" asp-controller="Home" method="get">
+                                    <select name="id" id="serchCatalogList" class="custom-select border-0 rounded-0 bg-light form-control d-none d-lg-inline">
+                                        <option value="" selected>@(Localizer["All Categories"])</option>
+                                        @if (_Menu != null && _Menu.Count() > 0)
+                                        {
+                                            foreach (var m in _Menu)
+                                            {
+                                                <option value="@m.Id">@m.Name</option>
+                                                if (m.ChildSection != null && m.ChildSection.Count() > 0)
+                                                {
+                                                    foreach (var ch in m.ChildSection)
+                                                    {
+                                                        <option value="@ch.Id" class="text-muted">&emsp;@ch.Name</option>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    <input name="serchKeys" class="form-control border-0 border-left col" type="search" placeholder="@Localizer["Enter Your Keyword"]" aria-label="Search" value="@(string.IsNullOrEmpty((string)ViewBag.SerchKeys)?"":(string)ViewBag.SerchKeys)">
+                                    <button class="btn btn-primary text-white col-auto" type="submit">
+                                        <i class="las la-search"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="header-wrap" class="shadow-sm">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <nav class="navbar navbar-expand-lg navbar-light position-static">
+                                <a class="navbar-brand logo d-lg-none" asp-action="Index" asp-controller="Home">
+                                    <img class="img-fluid" src="~/assets/images/logo.png" alt="">
+                                </a>
+                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="collapse navbar-collapse" id="navbarNav">
+                                    <ul class="navbar-nav">
+                                        @if (_Menu != null && _Menu.Count() > 0)
+                                        {
+                                            @foreach (var el in _Menu)
+                                            {
+                                                @if (el.ChildSection != null && el.ChildSection.Count() > 0)
+                                                {
+                                                    <li class="nav-item dropdown">
+                                                        <a class="nav-link dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown">@el.Name</a>
+                                                        <div class="dropdown-menu text-nowrap">
+                                                            <div class="container p-0">
+                                                                <div class="row w-100 no-gutters">
+                                                                    @{
+                                                                        bool end = true;
+                                                                    }
+                                                                    <div class="col-12">
+                                                                        <a class="p-3 font-weight-bold text-dark" asp-action="Products" asp-controller="Home" asp-route-id="@el.Id">@el.Name</a>
+                                                                    </div>
+                                                                    @for (int i = 0; end; i++)
+                                                                    {
+                                                                        <div class="col-12 col-md-auto px-3 pb-3">
+                                                                            <ul class="list-unstyled">
+                                                                                @for (int j = i * 10; true; j++)
+                                                                                {
+                                                                                    var ch = el.ChildSection.ElementAt(j);
+
+                                                                                    <li>
+                                                                                        <a asp-action="Products" asp-controller="Home" asp-route-id="@ch.Id">@ch.Name</a>
+                                                                                    </li>
+
+                                                                                    if (j + 1 == el.ChildSection.Count())
+                                                                                    {
+                                                                                        end = false;
+                                                                                        break;
+                                                                                    }
+                                                                                    if (j == 9) { break; }
+                                                                                }
+                                                                            </ul>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                }
+                                                else
+                                                {
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" asp-action="Products" asp-controller="Home" asp-route-id="@el.Id">@el.Name</a>
+                                                    </li>
+                                                }
+                                            }
+                                        }
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-action="ContactUs" asp-controller="Home">@Localizer["Contact"]</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="right-nav align-items-center d-flex justify-content-end">
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <a class="mr-1 mr-sm-3" asp-action="MyAccount" asp-controller="Account"><i class="las la-user-alt"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a class="mr-1 mr-sm-3" asp-action="login" asp-controller="account"><i class="las la-user-alt"></i></a>
+                                    }
+                                    <a class="mr-3 d-none d-sm-inline position-relative" asp-action="Favorites" asp-controller="Home" id="favoritesWrap"><i class="lar la-heart"></i><small class="d-none"></small></a>
+                                    <div>
+                                        <a class="d-flex align-items-center position-relative" href="#" id="ShoppingBagWrap" data-toggle="modal" data-target="#cartModal">
+                                            <span class="bg-white px-2 py-1 shadow-sm rounded">
+                                                <i class="las la-shopping-cart"></i>
+                                            </span>
+                                            <small class="d-none"></small>
+                                        </a>
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        @RenderBody()
+        <footer class="py-11 bg-dark">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-lg-3">
+                        <a class="footer-logo text-white h2 mb-0" asp-action="Index" asp-controller="Home">
+                            Alcantara
+                        </a>
+                        <p class="my-3 text-muted"></p>
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item">
+                                <a class="text-light ic-2x" href="#"><i class="la la-facebook"></i></a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="text-light ic-2x" href="#"><i class="la la-instagram"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-12 col-lg-6 mt-6 mt-lg-0">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 navbar-dark pl-6">
+                                <h5 class="mb-4 text-white">@Localizer["Quick Links"]</h5>
+                                <ul class="navbar-nav list-unstyled mb-0">
+                                    <li class="mb-3 nav-item">
+                                        <a class="nav-link" asp-action="Index" asp-controller="Home">@Localizer["Home"]</a>
+                                    </li>
+                                    <li class="mb-3 nav-item">
+                                        <a class="nav-link" asp-action="AboutUs" asp-controller="Home">@Localizer["About"]</a>
+                                    </li>
+                                    <li class="mb-3 nav-item">
+                                        <a class="nav-link" asp-action="Policy" asp-controller="Home">@Localizer["Policy"]</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-action="ContactUs" asp-controller="Home">@Localizer["Contact Us"]</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-6 mt-sm-0 navbar-dark pl-6">
+                                <h5 class="mb-4 text-white">@Localizer["Top Categories"]</h5>
+                                <ul class="navbar-nav list-unstyled mb-0">
+                                    @if (_Menu != null && _Menu.Count() > 0)
+                                    {
+                                        @for (int i = 0; i < _Menu.Count() && i < 7; i++)
+                                        {
+                                            var el = _Menu.ElementAt(i);
+                                            <li class="mb-3 nav-item">
+                                                <a class="nav-link" asp-action="Products" asp-controller="Home" asp-route-id="@el.Id">@el.Name</a>
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-3 mt-6 mt-lg-0">
+                        <div class=" mb-3 d-none">
+                            <div class="mr-2">
+                                <i class="las la-map ic-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 text-light">@Localizer["Store address"]</h6>
+                                <p class="mb-0 text-muted">@Localizer["423B, Road Wordwide Country, USA"]</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="mr-2">
+                                <i class="las la-envelope ic-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 text-light">@Localizer["Email Us"]</h6>
+                                <a class="text-muted" href="mailto:alcantara@alcantara.am"> alcantara@alcantara.am</a>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="mr-2">
+                                <i class="las la-mobile ic-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 text-light">@Localizer["Phone Number"]</h6>
+                                <a class="text-muted" href="tel:+37433710720">+374 33 710-720</a>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="mr-2">
+                                <i class="las la-clock ic-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 text-light">@Localizer["Working Hours"]</h6>
+                                <span class="text-muted">@Localizer["Mon - Fri: 10AM - 7PM"]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-8">
+                <div class="row text-muted align-items-center">
+                    <div class="col-md-7">
+                        Copyright ©2020 All rights reserved
+                    </div>
+                    <div class="col-md-5 text-md-right mt-3 mt-md-0">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item">
+                                <a href="javascript:void(0);">
+                                    <img class="img-fluid" src="~/assets/images/pay-icon/01.png" alt="">
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="javascript:void(0);">
+                                    <img class="img-fluid" src="~/assets/images/pay-icon/02.png" alt="">
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="javascript:void(0);">
+                                    <img class="img-fluid" src="~/Icons/E-Pay.png" alt="Idram">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <div class="modal fade cart-modal" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">@Localizer["Your Cart"] (<span>0</span>)</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="cartProductsWrap">
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-8">
+                        <span class="text-muted">@Localizer["Subtotal"]:</span>  <span class="text-dark" id="cartBodyTotal">0</span>
+                    </div> <a asp-action="Cart" asp-controller="Home" class="btn btn-primary btn-animated mr-2"><i class="las la-shopping-cart mr-1"></i>@Localizer["View Cart"]</a>
+                    <a asp-action="checkout" asp-controller="Home" class="btn btn-dark"><i class="las la-money-check mr-1"></i>@Localizer["Continue To Checkout"]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade view-modal" id="quick-view" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row align-items-center">
+                        <div class="col-lg-5 col-12">
+                            <a class="GetPr" href="#">
+                                <img class="img-fluid rounded" src="" alt="" />
+                            </a>
+                        </div>
+                        <div class="col-lg-7 col-12 mt-5 mt-lg-0">
+                            <div class="product-details">
+                                <h3 class="mb-0 prTitle"></h3>
+                                <div class="star-rating mb-4">
+                                </div>
+                                <span class="product-price h4"></span>
+                                <ul class="list-unstyled my-4">
+                                    <li class="mb-2">
+                                        @Localizer["Brand"]: <span class="text-muted prBrand"></span>
+                                    </li>
+                                </ul>
+                                <p class="mb-5 prDes"></p>
+                                <div class="d-sm-flex align-items-center mt-5 product-card">
+                                    <button class="btn btn-primary btn-animated mr-sm-4 mb-3 mb-sm-0 AddToCart" onclick="addToCart(this)"><i class="las la-shopping-cart mr-1"></i>@Localizer["Add To Cart"]</button>
+                                    <a class="btn btn-animated btn-dark BuyNow" href="#">@Localizer["Buy Now"]</a>
+                                </div>
+                                <div class="d-sm-flex align-items-center border-top pt-4 mt-5">
+                                    <h6 class="mb-sm-0 mr-sm-4">@Localizer["Share It"]:</h6>
+                                    <ul class="list-inline">
+                                        <li class="list-inline-item">
+                                            <a class="bg-white shadow-sm rounded p-2" href="#"><i class="la la-facebook"></i></a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a class="bg-white shadow-sm rounded p-2" href="#"><i class="la la-instagram"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @{await RenderSectionAsync("Subscribe", required: false);}
+    <div class="scroll-top"><a class="smoothscroll" href="index.html#top"><i class="las la-angle-up"></i></a></div>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+        <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+        <script src="~/lib/jquery-cookie/jquery.cookie.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                asp-suppress-fallback-integrity="true"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                asp-suppress-fallback-integrity="true"
+                crossorigin="anonymous"
+                integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
+        </script>
+        <script src="/lib/microsoft-signalr/signalr.min.js"></script>
+        <script src="/lib/jquery-cookie/jquery.cookie.min.js"></script>
+    </environment>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/assets/js/theme-plugin.js"></script>
+    <script src="~/assets/js/theme-script.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

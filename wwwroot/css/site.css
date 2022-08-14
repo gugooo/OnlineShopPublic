@@ -1,0 +1,267 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+/*
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}*/
+
+/* Sticky footer styles
+-------------------------------------------------- */
+/*
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}*/
+
+/* Sticky footer styles
+-------------------------------------------------- */
+/*
+html {
+  position: relative;
+  min-height: 100%;
+}
+    */
+/*
+body {
+  
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  
+  height: 60px;
+  line-height: 60px; 
+}*/
+.la-heart{
+    font-size:32px;
+}
+.owl-nav > .owl-prev {
+    margin-left: 16px;
+}
+.owl-nav > .owl-next {
+    margin-right: 16px;
+}
+.pDef {
+    padding: 0.375rem 0.75rem !important;
+}
+#favoritesWrap small {
+    display: block;
+    position: absolute;
+    width: 20px;
+    text-align: center;
+    right: -13px;
+    top: -7px;
+    border-radius: 50%;
+    background-color: rgba(19,46,109,0.6);
+    line-height: 18px;
+    color: white;
+    font-size: 10px;
+}
+
+#ShoppingBagWrap small {
+    display: block;
+    position: absolute;
+    width: 20px;
+    text-align: center;
+    right: -13px;
+    top: -7px;
+    border-radius: 50%;
+    background-color: rgba(19,46,109,0.6);
+    line-height: 18px;
+    color: white;
+    font-size: 10px;
+}
+.HeartSelected i{
+    font-weight:bold;
+}
+.btn-primary {
+    color:rgb(33,64,154);
+    background-color: rgb(255,199,9);
+    border-color: rgb(255,199,9);
+}
+    .btn-primary:hover {
+        background-color: rgb(225,169,0);
+        border-color: rgb(225,169,0);
+    }
+.btn-animated:before {
+    background-color: rgb(255,199,9);
+}
+.scroll-top a, .scroll-top a:visited {
+    background-color: rgb(255,199,9);
+}
+    .scroll-top a:hover, .scroll-top a:focus {
+        background-color: #fff;
+        color: rgb(255,199,9);
+    }
+.btn-dark {
+    background-color: rgb(33,64,154);
+    border-color: rgb(33,64,154);
+}
+    .btn-dark:hover {
+        background-color: rgb(255,199,9);
+        border-color: rgb(255,199,9);
+        color: rgb(33,64,154);
+    }
+.modal-header .close {
+    background-color: rgb(255,199,9);
+}
+.text-primary {
+    color: rgb(255,199,9) !important;
+}
+.accordion .card .card-header a[aria-expanded="true"] {
+    color: rgb(255,199,9);
+}
+    .accordion .card .card-header a[aria-expanded="true"]:before {
+        background-color: rgb(255,199,9);
+    }
+.product-card .btn-wishlist {
+    color: rgb(255,199,9);
+}
+.view-filter a.active {
+    color: rgb(255,199,9);
+}
+a {
+    color: rgb(255,199,9);
+}
+.bg-dark{
+    background-color:rgb(16,217,205) !important;
+}
+section {
+    padding: 1rem 0;
+}
+h2, .h2 {
+    font-size: 2rem;
+}
+/*Live Chat*/
+#liveChatBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 100px;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+    #liveChatBtn:hover {
+        opacity: 0.8;
+    }
+
+#liveChatWrap {
+    position: fixed;
+    bottom: 30px;
+    right: 100px;
+    z-index: 1000;
+    height: 415px;
+    width: 300px;
+    border-radius: 0.25em;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background-color: rgba(240,240,240,0.9);
+}
+
+#closeChat {
+    border-top-right-radius: 0.25em;
+    text-align: center;
+    width: 50px;
+}
+
+#abortChat {
+    border-top-left-radius: 0.25em;
+    text-align: center;
+    width: 50px;
+}
+
+    #abortChat:hover {
+        background-color: rgb(240,73,89) !important;
+        cursor: pointer;
+    }
+
+#messagingChatWrap {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25em;
+    height: 332px;
+}
+
+#closeChat:hover {
+    background-color: rgb(255,200,20) !important;
+    cursor: pointer;
+}
+
+#messagingChat {
+    width: 100%;
+    height: 280px;
+    overflow-y: auto;
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    border-top-left-radius: 0.25em;
+    border-top-right-radius: 0.25em;
+}
+
+#newMessage {
+    float: left;
+    height: 50px;
+    resize: none;
+    border: none;
+    width: 80%;
+    outline: none;
+    border-bottom-left-radius: 0.25em;
+}
+
+#sendNewMessage {
+    width: 20%;
+    line-height: 50px;
+    text-align: center;
+    background-color: white;
+    float: right;
+    border-bottom-right-radius: 0.25em;
+    cursor: pointer;
+}
+
+    #sendNewMessage:hover {
+        background-color: whitesmoke;
+    }
+
+.operatorMessage > div {
+    display: inline-block;
+    border-radius: 0.25em;
+    margin: 5px;
+    padding: 8px;
+    background-color: whitesmoke;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.userMessage {
+    text-align: right;
+}
+
+    .userMessage > div {
+        display: inline-block;
+        border-radius: 0.25em;
+        margin: 5px;
+        padding: 8px;
+        background-color: rgba(54, 88, 167, 0.35);
+        border: 1px solid rgba(0, 0, 0, 0.15);
+    }

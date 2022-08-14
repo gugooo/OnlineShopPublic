@@ -1,0 +1,821 @@
+﻿
+@{
+    ViewData["Title"] = Localizer["Product"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string culture = (string)ViewBag.Culture;
+}
+@using System.Globalization;
+@section Style{
+    <style>
+        .Color {
+            float: left;
+            text-align: center;
+            padding: 0 5px;
+        }
+
+            .Color div {
+                cursor: pointer;
+                height: 20px;
+                width: 40px;
+                margin: 5px auto;
+                border: 1px solid rgba(0, 0, 0, 0.25);
+            }
+
+                .Color div:hover {
+                    border: 1px solid rgba(0, 0, 0, 0.8);
+                }
+
+        .selectColor {
+            outline: 2px solid lightskyblue;
+        }
+
+        .productAtrs select > option:disabled {
+            background-color: lightgrey;
+            color: whitesmoke;
+        }
+
+        .productAtrs .textDelete {
+            text-decoration: line-through;
+        }
+
+        #ProductSlider {
+            height: 450px;
+            width: 442px;
+            margin: 0 auto;
+        }
+
+            #ProductSlider .pSlider {
+                position: relative;
+                padding: 20px 0 30px 0;
+                float: left;
+                height: 450px;
+                width: 72px;
+                overflow: hidden;
+            }
+
+        .pSlider img {
+            cursor: pointer;
+            height: 90px;
+            margin-top: 10px;
+            display: none;
+        }
+
+            .pSlider img:hover {
+                opacity: 0.8;
+            }
+
+        .prevS, .nextS {
+            position: absolute;
+            left: 0;
+            cursor: pointer;
+            text-align: center;
+            line-height: 28px;
+            width: 72px;
+            color: lightgray !important;
+        }
+
+        .prevS {
+            border-radius: 3px 3px 0 0;
+            top: 0;
+        }
+
+        .nextS {
+            border-radius: 0 0 3px 3px;
+            bottom: 0;
+        }
+
+            .prevS:hover, .nextS:hover {
+                background-color: rgba(0,0,0,0.8);
+            }
+
+
+        #ProductSlider .pImage {
+            float: right;
+            height: 450px;
+            width: 360px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        #ProductSlider .ImageSmall {
+            height: 450px;
+            width: auto;
+        }
+
+        .SliderFade {
+            -webkit-animation-name: fade;
+            -webkit-animation-duration: 1.5s;
+            animation-name: fade;
+            animation-duration: 1.5s;
+        }
+
+        @@-webkit-keyframes fade {
+            from {
+                opacity: .4
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        @@keyframes fade {
+            from {
+                opacity: .4
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        .ImageZoom {
+            z-index: 100;
+            border: 1px solid rgba(0,0,0,0.25);
+            border-radius: 0.25em;
+            background-color: white;
+            position: absolute;
+            height: 735px !important;
+            width: 690px !important;
+            padding: 30px;
+        }
+
+            .ImageZoom .pImage {
+                width: 540px !important;
+                height: 675px !important;
+                cursor: zoom-in !important;
+                overflow: auto !important;
+                -ms-overflow-style: none;
+                border: 1px solid rgba(0,0,0,0.25);
+            }
+
+                .ImageZoom .pImage::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .ImageZoom .pImage > img {
+                    height: 675px;
+                    /*width: 450px ;*/
+                }
+
+            .ImageZoom #imagClose {
+                display: block !important;
+                position: absolute;
+                right: 0;
+                top: 0;
+                padding: 3px;
+                cursor: pointer;
+            }
+
+        #imagClose:hover {
+            background-color: lightgray;
+        }
+
+        .maxImgSize {
+            height: 1200px !important;
+            width: auto !important;
+        }
+
+        img {
+            -webkit-transition: none;
+            -moz-transition: none;
+            -ms-transition: none;
+            -o-transition: none;
+            transition: none;
+        }
+    </style>
+}
+
+<section class="bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="h2 mb-0">@Localizer["Product"]</h1>
+            </div>
+            <div class="col-md-6 mt-3 mt-md-0">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-md-end bg-transparent p-0 m-0">
+                        <li class="breadcrumb-item">
+                            <a class="text-dark" href="product-left-image.html#"><i class="las la-home mr-1"></i>@Localizer["Home"]</a>
+                        </li>
+                        <li class="breadcrumb-item">@Localizer["Shop"]</li>
+                        <li class="breadcrumb-item active text-primary" aria-current="page">@Localizer["Product"]</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="page-content" id="productList">
+    @{
+        ProductView product = (ProductView)ViewBag.Product;
+    }
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div id="ProductSlider">
+                        <div class="pSlider">
+                            @if (product.Imgs != null && product.Imgs.Count() > 0)
+                            {
+                                @for (int i = 0; i < product.Imgs.Count(); i++)
+                                {
+                                    var img = product.Imgs.ElementAt(i);
+                                    <img class="@(i<4?"d-block ":"")SliderFade" src="@((img<=0)?"//:0":"/home/GetProductImg/"+img)" />
+                                }
+                            }
+                            <a class="prevS" onclick="changeSlide4(this)">&#9650;</a>
+                            <a class="nextS" onclick="changeSlide4(this)">&#9660;</a>
+                        </div>
+                        <div class="pImage">
+                            <img class="SliderFade ImageSmall" src="@((product?.Imgs?.ElementAt(0)<=0)?"//:0":"/home/GetProductImg/"+product.Imgs.ElementAt(0))" />
+                        </div>
+                        <div id="imagClose" class="d-none">&#10006;</div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-12 mt-5 mt-lg-0">
+                    <div class="product-details HeartSection">
+                        <h3 class="mb-0">
+                            @Html.Raw(product.Title)
+                        </h3>
+                        <div class="star-rating mb-4">
+                            @for (int i = 0; i < 5; i++)
+                            {
+                                if (i < product.Rating)
+                                {
+                                    <i class="las la-star"></i>
+                                }
+                                else
+                                {
+                                    <i class="las la-star font-weight-light"></i>
+                                }
+                            }
+                        </div>
+                        @{
+                            string _sale = product.Sale;
+                            string _price = product.Price;
+                        }
+                        @if (string.IsNullOrEmpty(_sale) || _sale == "0")
+                        {
+                            <span class="product-price h4">@(_price) <small>@(ViewBag.amd ?? "")</small></span>
+                        }
+                        else
+                        {
+                            <span class="product-price h4"><del class="text-muted h6">@(_price)</del> @(_sale) <small>@(ViewBag.amd ?? "")</small></span>
+                        }
+                        <ul class="list-unstyled my-4">
+                            <li class="mb-2 d-none">
+                                Availibility: <span class="text-muted"> In Stock</span>
+                            </li>
+                            @if (!string.IsNullOrEmpty(product.Brand))
+                            {
+                                <li>
+                                    @Localizer["Brand"]: <span class="text-muted">@product.Brand</span>
+                                </li>
+                            }
+
+                        </ul>
+                        <p class="mb-4">@Html.Raw(string.IsNullOrEmpty(product?.Description) ? "" : product.Description)</p>
+                        <div class="d-sm-flex align-items-center mb-5">
+                            <div class="d-flex align-items-center mr-sm-4">
+                                <button class="btn-product btn-product-up">
+                                    <i class="las la-minus"></i>
+                                </button>
+                                <input class="form-product" type="number" name="form-product" value="1">
+                                <button class="btn-product btn-product-down">
+                                    <i class="las la-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="d-sm-flex align-items-center mb-5 productAtrs">
+                            @if (product.Atributes != null && product.Atributes.Count() > 0)
+                            {
+                                bool firstEl = true;
+                                for (int i = 0; i < product.Atributes.Count(); i++)
+                                {
+
+                                    KeyValuePair<Atribute, List<AtributeValue>> atr;
+                                    if (firstEl && product.Atributes.Any(_ => _.Key.Name.ToUpper() == "COLOR"))
+                                    {
+                                        atr = product.Atributes.First(_ => _.Key.Name.ToUpper() == "COLOR");
+                                        i--;
+                                        firstEl = false;
+                                    }
+                                    else
+                                    {
+                                        atr = product.Atributes.ElementAt(i);
+                                        if (atr.Key.Name.ToUpper() == "COLOR") { continue; }
+                                    }
+
+
+                                    if (atr.Key.Name.ToUpper() == "COLOR")
+                                    {
+                                        <div class="" id="atributeColor" style=' overflow-x: auto; overflow-y: hidden; '>
+                                            @for (int j = 0; atr.Value != null && j < atr.Value.Count; j++)
+                                            {
+                                                var atrVal = atr.Value.ElementAt(j);
+                                                <div class="Color atrVal" data-id="@atrVal.Id">@CultureData.GetDefoultName(atrVal.CultureName, culture, atrVal.Value)<div class="@(product.LinkAtrVal != null ? (product.LinkAtrVal.Id == atrVal.Id ? "selectColor" : "") : (j == 0 ? "selectColor" : ""))" style=" background-color: @atrVal.Value;" title="@atrVal.Value"></div></div>
+                                            }
+                                            <select id="colorSelect" class="d-none" data-id="@atr.Key.Id">
+                                                @for (int j = 0; atr.Value != null && j < atr.Value.Count; j++)
+                                                {
+                                                    var atrVal = atr.Value.ElementAt(j);
+                                                    if (product.LinkAtrVal != null)
+                                                    {
+                                                        if (product.LinkAtrVal.Id == atrVal.Id)
+                                                        {
+                                                            <option selected value="@atrVal.Id"></option>
+                                                            continue;
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        if (j == 0)
+                                                        {
+                                                            <option selected value="@atrVal.Id"></option>
+                                                            continue;
+                                                        }
+                                                    }
+                                                    <option value="@atrVal.Id"></option>
+                                                }
+                                            </select>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-auto">
+                                            <select class="custom-select@((atr.Key.Values.Count == 1 && !atr.Key.IsActive) ? " d-none" : "")" data-id="@atr.Key.Id">
+                                                <option value="">@CultureData.GetDefoultName(atr.Key.CultureName, culture, atr.Key.Name)</option>
+                                                @for (int j = 0; atr.Value != null && j < atr.Value.Count; j++)
+                                                {
+                                                    var atrVal = atr.Value.ElementAt(j);
+                                                    if (product.LinkAtrVal != null && product.LinkAtrVal.Id == atrVal.Id)
+                                                    {
+                                                        <option selected value="@atrVal.Id">@CultureData.GetDefoultName(atrVal.CultureName, culture, atrVal.Value)</option>
+                                                        continue;
+                                                    }
+                                                    if (atr.Key.Values.Count == 1 && !atr.Key.IsActive)
+                                                    {
+                                                        <option selected value="@atrVal.Id">@CultureData.GetDefoultName(atrVal.CultureName, culture, atrVal.Value)</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@atrVal.Id">@CultureData.GetDefoultName(atrVal.CultureName, culture, atrVal.Value)</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    }
+                                }
+                            }
+
+                        </div>
+                        <div class="d-sm-flex align-items-center mt-5 ProductWrapper" data-id="@product.Id">
+                            <a class="btn btn-primary btn-animated mr-sm-4 mb-3 mb-sm-0" asp-controller="Home" asp-action="Checkout" asp-route-id="@product.Id">@Localizer["Buy Now"]</a>
+                            <button class="btn btn-primary btn-animated mr-sm-4 mb-3 mb-sm-0" id="buttonAddToBag"><i class="las la-shopping-cart mr-1"></i>@Localizer["Add To Cart"]</button>
+                            <button class="btn btn-animated btn-dark Heart" type="button" id="HeartBtn">
+                                <i class="lar la-heart mr-1"></i>@Localizer["Add to wishlist"]
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="p-0">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tab">
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <a class="nav-item nav-link active ml-0" id="nav-tab1" data-toggle="tab" href="product-left-image.html#tab3-1" role="tab" aria-selected="true">@Localizer["Ratings and Reviews"]</a>
+                            </div>
+                        </nav>
+                        @{ IEnumerable<Review> reviews = (IEnumerable<Review>)ViewBag.Reviews;}
+                        <div class="tab-content pt-5 p-0">
+                            <div role="tabpanel" class="tab-pane fade show active" id="tab3-1">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <div class="shadow-sm text-center p-5">
+                                            <h4>@Localizer["Based on"] @reviews.Count() @Localizer["Reviews"]</h4>
+                                            <h5>@Localizer["Average"]</h5>
+                                            <h4>@((reviews != null && reviews.Count() > 0) ? reviews.Average(_ => _.Rating).ToString("0.00") : "0.00")</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mt-3 mt-lg-0">
+                                        <div class="rating-list">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="text-nowrap mr-3">5 @Localizer["Star"]</div>
+                                                <div class="w-100">
+                                                    <div class="progress" style="height: 5px;">
+                                                        @{
+                                                            int pr5 = 0;
+                                                            int pr4 = 0;
+                                                            int pr3 = 0;
+                                                            int pr2 = 0;
+                                                            int pr1 = 0;
+                                                            if (reviews != null && reviews.Count() > 0)
+                                                            {
+                                                                pr5 = 100 * reviews.Where(_ => _.Rating == 5).Count() / reviews.Count();
+                                                                pr4 = 100 * reviews.Where(_ => _.Rating == 4).Count() / reviews.Count();
+                                                                pr3 = 100 * reviews.Where(_ => _.Rating == 3).Count() / reviews.Count();
+                                                                pr2 = 100 * reviews.Where(_ => _.Rating == 2).Count() / reviews.Count();
+                                                                pr1 = 100 * reviews.Where(_ => _.Rating == 1).Count() / reviews.Count();
+                                                            }
+
+                                                        }
+                                                        <div class="progress-bar bg-success" role="progressbar" style="width: @(pr5)%;" aria-valuenow="@pr5" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div><span class="text-muted ml-3">@(pr5)%</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="text-nowrap mr-3">4 @Localizer["Star"]</div>
+                                                <div class="w-100">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-success" role="progressbar" style="width: @(pr4)%;" aria-valuenow="@pr4" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div><span class="text-muted ml-3">@(pr4)%</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="text-nowrap mr-3">3 @Localizer["Star"]</div>
+                                                <div class="w-100">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-success" role="progressbar" style="width: @(pr3)%;" aria-valuenow="@pr3" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div><span class="text-muted ml-3">@(pr3)%</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="text-nowrap mr-3">2 @Localizer["Star"]</div>
+                                                <div class="w-100">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-warning" role="progressbar" style="width: @(pr2)%;" aria-valuenow="@pr2" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div><span class="text-muted ml-3">@(pr2)%</span>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="text-nowrap mr-3">1 @Localizer["Star"]</div>
+                                                <div class="w-100">
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-danger" role="progressbar" style="width: @(pr1)%;" aria-valuenow="@pr1" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div><span class="text-muted ml-3">@(pr1)%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="mt-8 shadow p-5">
+                                    <div class="section-title mb-3">
+                                        <h4>@Localizer["Add a review"]</h4>
+                                    </div>
+                                    <form id="reviewForm" class="row">
+                                        <input type="hidden" name="ProductId" value="@ViewBag.ID" />
+                                        <div class="form-group clearfix col-md-6">
+                                            <select onchange="changeReviewData()" id="reviewRating" name="Rating" class="custom-select form-control" @(Context.User.Identity.IsAuthenticated ? "" : "disabled")>
+                                                <option value="">@Localizer["Rating -- Select"]</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                        </div>
+                                        <div class="w-100"></div>
+                                        <div class="form-group col-md-6">
+                                            <textarea @(Context.User.Identity.IsAuthenticated ? "" : "disabled") id="reviewDesc" name="Description" class="form-control" placeholder="@Localizer["Write Your Review"]" rows="4" required="required" data-error="@Localizer["Please, leave us a review."]"></textarea>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                        <div class="col-12">
+                                            <button disabled onclick="sendReview()" type="button" class="btn btn-secondary mt-3">@Localizer["Post Review"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                @if (reviews != null && reviews.Count() > 0)
+                                {
+                                    foreach (var re in reviews)
+                                    {
+                                        <div class="media-holder mt-5 border-bottom">
+                                            <div class="media d-block d-md-flex">
+                                                <div class="media-body">
+                                                    <div class="d-flex align-items-center">
+                                                        <h6 class="mb-0">@(re?.FK_User?.FirstName ?? "" + " " + re?.FK_User?.LastName ?? "User")</h6>
+                                                        <small class="mx-3 text-muted">@re.Date.ToShortDateString()</small>
+                                                        <div class="star-rating">
+                                                            @for (int i = 0; i < 5; i++)
+                                                            {
+                                                                if (i < re.Rating)
+                                                                {
+                                                                    <i class="las la-star"></i>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <i class="las la-star font-weight-light"></i>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <p class="mb-0 mt-3 p-5">@re.Description</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    @{
+        IEnumerable<Product> slidePrs = (IEnumerable<Product>)ViewBag.SlidePrs;
+    }
+    <section>
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8 col-md-10">
+                    <div class="mb-5">
+                        <h6 class="text-primary mb-1">
+                            @Localizer["— You may also like"]
+                        </h6>
+                        <h2 class="mb-0">@Localizer["Related Products"]</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col HeartSection QVLissener">
+                    <div class="owl-carousel no-pb owl-2" data-dots="false" data-nav="true" data-items="3" data-md-items="2" data-sm-items="1">
+                        @if (slidePrs != null && slidePrs.Count() > 0)
+                        {
+                            foreach (var spr in slidePrs)
+                            {
+                                var prType = spr.ProductTypes?.FirstOrDefault(_ => _.IsMine);
+                                var imgs = prType?.Images?.OrderBy(_ => _.Id);
+                                int? imgId1 = imgs?.FirstOrDefault()?.Id;
+                                int? imgId2 = imgs?.ElementAtOrDefault(1)?.Id;
+                                if (imgId2 == null && imgId1 != null) { imgId2 = imgId1; }
+                                string Price = prType?.Price.ToString("N", new CultureInfo("en")).Replace(".00", String.Empty);
+                                string Sale = prType?.Sale.ToString("N", new CultureInfo("en")).Replace(".00", String.Empty);
+                                <div class="item">
+                                    <div class="card product-card ProductWrapper" data-id="@spr.Id">
+                                        <button class="btn-wishlist btn-sm Heart" type="button" data-toggle="tooltip" data-placement="left" title="@Localizer["Add to wishlist"]">
+                                            <i class="lar la-heart"></i>
+                                        </button>
+                                        <a class="card-img-hover d-block" asp-action="Product" asp-controller="Home" asp-route-id="@spr.Id">
+                                            <img class="card-img-top card-img-back" src="@(imgId1==null?"//:0": Url.Action("GetProductImg","Home",new {id=imgId1 }))" alt="...">
+                                            <img class="card-img-top card-img-front" src="@(imgId2==null?"//:0": Url.Action("GetProductImg","Home",new {id=imgId2 }))" alt="...">
+                                        </a>
+                                        <div class="card-info">
+                                            <div class="card-body">
+                                                <div class="product-title">
+                                                    <a class="link-title" asp-action="Product" asp-controller="Home" asp-route-id="@spr.Id">@Html.Raw(CultureData.GetDefoultName(prType?.CultureTitle, (string)ViewBag.Culture))</a>
+                                                </div>
+                                                <div class="mt-1">
+                                                    @if (string.IsNullOrEmpty(Sale) || Sale == "0")
+                                                    {
+                                                        <span class="product-price">@(Price) <small>@(ViewBag.amd ?? "")</small></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="product-price"><del class="text-muted">@(Price)</del> @(Sale) <small>@(ViewBag.amd ?? "")</small></span>
+                                                    }
+                                                    <div class="star-rating">
+                                                        @if (spr.Reviews != null && spr.Reviews.Count() > 0)
+                                                        {
+                                                            for (int r = 0; r < 5; r++)
+                                                            {
+                                                                if (r < spr.Reviews.Average(_ => _.Rating))
+                                                                {
+                                                                    <i class="las la-star"></i>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <i class="las la-star font-weight-light"></i>
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="las la-star"></i><i class="las la-star"></i><i class="las la-star"></i><i class="las la-star"></i><i class="las la-star"></i>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer bg-transparent border-0">
+                                                <div class="product-link d-flex align-items-center justify-content-center">
+                                                    <a class="btn btn-compare" asp-controller="Home" asp-action="Checkout" asp-route-id="@spr.Id">
+                                                        @Localizer["Buy Now"]
+                                                    </a>
+                                                    <button class="btn-cart btn btn-primary btn-animated mx-3" type="button" onclick="addToCart(this)">
+                                                        <i class="las la-shopping-cart mr-1"></i>
+                                                    </button>
+                                                    <button class="btn btn-view qv" data-toggle="tooltip" data-placement="top" title="@Localizer["Quick View"]" data-id="@spr.Id">
+                                                        <span data-target="#quick-view" data-toggle="modal"><i class="las la-eye"></i></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts{
+
+    <script>
+        var atrValues;
+        function changeReviewData() {
+            console.log(this);
+            if ($("#reviewRating").val() && $("#reviewDesc").val()) {
+                $("#reviewForm button").attr("disabled", false).removeClass("btn-secondary").addClass("btn-primary btn-animated");
+            }
+            else {
+                $("#reviewForm button").attr("disabled", true).removeClass("btn-primary btn-animated").addClass("btn-secondary");
+            }
+        }
+
+        function sendReview() {
+            $.post('/Home/Review/', $('#reviewForm').serialize(), function (data) {
+                if (data && data.res) alert("@Localizer["Thank You for review."]");
+                else alert("@Localizer["Please reload page and try again."]");
+            });
+            $('#reviewForm').trigger("reset");
+        }
+        $(document).ready(function () {
+            //-------------------------------------------------------------
+             $('.slider-for').slick({
+              slidesToShow: 1,
+              slidesToScroll: 1,
+              arrows: false,
+                 fade: true,
+                cssEase: 'linear',
+              asNavFor: '.slider-nav'
+            });
+            $('.slider-nav').slick({
+              slidesToShow: 4,
+              slidesToScroll: 1,
+                asNavFor: '.slider-for',
+                dots: false,
+              centerMode: true,
+                focusOnSelect: true,
+                centerMode: true,
+                centerPadding: '0',
+              vertical:true
+            });
+            //-------------------------------------------------------------
+
+
+            $("#reviewDesc").bind("input propertychange", function () { changeReviewData(); });
+        $("#ProductSlider .pImage").mousemove(function (e) {
+                if ($("#ProductSlider").hasClass("ImageZoom")) {
+                    !$(".pImage > img").hasClass("maxImgSize") && $(".pImage > img").addClass("maxImgSize");
+                    var x = e.pageX - $(e.currentTarget).offset().left;
+                    var y = e.pageY - $(e.currentTarget).offset().top;
+                    $(e.currentTarget).scrollLeft(x);
+                    $(e.currentTarget).scrollTop(y);
+                }
+            }).mouseleave(function () {
+                $(".pImage > img").removeClass("maxImgSize");
+            });
+            $("#ProductSlider .pImage").click(function () {
+                if (!$("#ProductSlider").hasClass("ImageZoom")) {
+                    $("#ProductSlider").addClass("ImageZoom");
+                    $(".pImage > img").removeClass("ImageSmall");
+                }
+                else if (!$(".pImage > img").hasClass("maxImgSize")) {
+                    $(".pImage > img").addClass("maxImgSize");
+                }
+            });
+            $('#imagClose').click(function () {
+                $("#ProductSlider").removeClass('ImageZoom')
+                     $(".pImage > img").addClass("ImageSmall");
+            });
+
+        $('#ProductSlider .pSlider').data('Index', 0);
+            $('#ProductSlider .pSlider').click(function (e) {
+                   if (e.target.tagName == "IMG") {
+                    $('#ProductSlider .pImage img').attr('src', e.target.src);
+                   }
+               });
+
+        $.post("/home/getAtributes/@product.Id", function (resp) { atrValues = resp; updateAtributes(); });
+        $('.atrVal').click(function () {
+                   if ($(this).hasClass('textDelete')) return;
+                   if ($('#colorSelect').val() != $(this).data('id')) {
+                    $('.atrVal div.selectColor').removeClass('selectColor');
+                    $(this).children('div').addClass('selectColor');
+                    $('#colorSelect').val($(this).data('id'));
+                    $('#colorSelect').trigger('change');
+                   }
+               });
+        $('.productAtrs select').change(function () {
+            $(this).removeClass('border-danger');
+            updateAtributes();
+        });
+        $("#buttonAddToBag").click(function () {
+                   var selects = $('.productAtrs select');
+                   var options = $('.productAtrs').find('select option:selected:not([value=""])');
+            var optionsVal = options.map(function () { return this.value }).toArray();
+                   var productId = "@product.Id";
+                   if (selects.length == options.length) {
+                       var products = $.cookie("ProductList");
+                       products = products && JSON.parse(products);
+                       if ($.isArray(products)) {
+                           var productIsAdd = products.find(_ => _.id == productId);
+                           if (productIsAdd && $(productIsAdd.atrs).not(optionsVal).length == 0 && $(optionsVal).not(productIsAdd.atrs).length == 0) {
+                               productIsAdd.count = productIsAdd.count + 1;
+                               products = $.grep(products, function (at) { return at.id != productId; });
+                               products.push(productIsAdd);
+                        $.cookie("ProductList", JSON.stringify(products), { expires: 365, path: '/' });
+                               prCount = 0;
+                        $.each(products, function () { prCount = prCount + this.count; })
+                        $('#ShoppingBagWrap small').removeClass('d-none').text(prCount > 99 ? '99+' : prCount);
+                           }
+                    else {
+                               products.push({ id: productId, count: 1, atrs: optionsVal });
+                        $.cookie("ProductList", JSON.stringify(products), { expires: 365, path: '/' });
+                               prCount = 0;
+                        $.each(products, function () { prCount = prCount + this.count; })
+                        $('#ShoppingBagWrap small').removeClass('d-none').text(prCount);
+                           }
+                       }
+                else {
+                           products = [{ id: productId, count: 1, atrs: optionsVal }];
+                    $.cookie("ProductList", JSON.stringify(products),{ expires: 365, path: '/' });
+                    $('#ShoppingBagWrap small').removeClass('d-none').text(1);
+                       }
+                   }
+                   else {
+                $('.productAtrs select option:selected[value=""]').parent().addClass('border-danger');
+                $('#atributeColor.textDelete .selectColor').addClass('border-danger');
+            }
+            updateCart();
+            });
+    });
+    function updateAtributes() {
+            if (!atrValues) return;
+                $('.productAtrs select option').attr('disabled', false);
+                $.each($('.productAtrs select'), function (i, sel) {
+                       if ($(sel).val()) {
+                           var temp = $.grep(atrValues, function (c) { return ($.inArray($(sel).val(), c) != -1); });
+
+                            $.each($('.productAtrs select').not(sel).find('option:not([value=""])'), function (j, op) {
+                                   var oId = $(op).val();
+                                $.each(temp, function (k, c) {
+                                       if ($.inArray(oId, c) == -1) {
+                                        $(op).attr('disabled', true);
+                                       }
+                                    else {
+                                        $(op).attr('disabled', false);
+                                           return false;
+                                       }
+                                   });
+                               });
+                       }
+                   });
+                   changeColor();
+            }
+
+    function changeColor() {
+            var options = $('#atributeColor select>option[Value]');
+            $('#atributeColor .atrVal div').removeClass('border-danger');
+            $.each(options, function () {
+                if ($(this).attr('disabled')) {
+                    $('#atributeColor .atrVal[data-id="' + $(this).val() + '"]').addClass('textDelete');
+                }
+                else {
+                    $('#atributeColor .atrVal[data-id="' + $(this).val() + '"]').removeClass('textDelete');
+                }
+            });
+    }
+
+     function changeSlide4(el) {
+            var parent = $(el).parent();
+            if ($(el).hasClass('nextS')) ShowSlide4(parent.data('Index') + 1, parent);
+            else ShowSlide4(parent.data('Index') - 1, parent);
+        }
+
+        function ShowSlide4(n, slide) {
+            var items = slide.find("img");
+            if (items.length <= 4) return;
+                    items.removeClass('d-block');
+
+            if (n > (items.length - 4)) n = 0;
+            else if (n < 0) n = items.length - 4;
+            for (var i = n; i < n + 4; i++)$(items[i]).addClass('d-block');
+
+            slide.data('Index', n);
+        }
+
+    </script>
+}

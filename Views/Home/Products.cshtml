@@ -1,0 +1,400 @@
+﻿
+@{
+    ViewData["Title"] = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string culture = (string)ViewBag.Culture;
+    IDictionary<Atribute, List<AtributeValue>> Atributes = (IDictionary<Atribute, List<AtributeValue>>)ViewBag.Atributes;
+    int minSum = (int)ViewBag.MinSum;
+    minSum = (minSum - minSum % 1000);
+    int maxSum = (int)ViewBag.MaxSum;
+    maxSum = (maxSum - maxSum % 1000) + 1000;
+}
+
+@section Style{
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+}
+@{
+    Catalog catalog = (Catalog)ViewBag.Catalog;
+}
+<section class="bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="h2 mb-0">@CultureData.GetDefoultName(catalog.CultureName, culture, catalog.Name)</h1>
+            </div>
+            <div class="col-md-6 mt-3 mt-md-0">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-md-end bg-transparent p-0 m-0">
+                        <li class="breadcrumb-item">
+                            <a class="text-dark" asp-action="Index" asp-controller="Home"><i class="las la-home mr-1"></i>@Localizer["Home"]</a>
+                        </li>
+                        <li class="breadcrumb-item">@Localizer["Shop"]</li>
+                        <li class="breadcrumb-item active text-primary" aria-current="page">@CultureData.GetDefoultName(catalog.CultureName, culture, catalog.Name)</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="page-content" style="background-color: #f1f1f1;">
+
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-9 col-md-12 order-lg-1">
+                    <div class="row mb-4 align-items-center d-none">
+                        <div class="col-md-5 mb-3 mb-md-0">
+                            <span class="text-muted">Showing 1 to 18 of 20 total</span>
+                        </div>
+                        <div class="col-md-7 d-flex align-items-center justify-content-md-end">
+                            <div class="view-filter">
+                                <a class="active" href="shop-grid-fullwidth.html"><i class="lab la-buromobelexperte"></i></a>
+                                <a href="shop-list-fullwidth.html"><i class="las la-list"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row QVLissener" id="productList">
+                        @{
+                            IEnumerable<ProductView> products = (IEnumerable<ProductView>)ViewBag.Products;
+                        }
+                        @if (products != null && products.Count() > 0)
+                        {
+                            @foreach (var pr in products)
+                            {
+                                <div class="col-lg-4 col-md-6 mt-8">
+                                    <div class="card product-card ProductWrapper" data-id="@pr.Id" data-atrId="@pr.LinkAtrVal?.Id">
+                                        <button class="btn-wishlist btn-sm Heart" type="button" data-toggle="tooltip" data-placement="left" title="@Localizer["Add to wishlist"]">
+                                            <i class="lar la-heart"></i>
+                                        </button>
+                                        <a class="card-img-hover d-block" asp-controller="Home" asp-action="Product" asp-route-id="@pr.Id">
+                                            <img class="card-img-top card-img-back" src="@((pr.ImgId<=0)?"//:0":"/home/GetProductImg/"+pr.ImgId )" alt="...">
+                                            <img class="card-img-top card-img-front" src="@((pr.ImgId2<=0)?"//:0":"/home/GetProductImg/"+pr.ImgId2 )" alt="...">
+                                        </a>
+
+                                        <div class="card-info">
+                                            <div class="card-body">
+                                                <div class="product-title">
+                                                    <a class="Product link-title" asp-controller="Home" asp-action="Product" asp-route-id="@pr.Id">@Html.Raw(pr.Title)</a>
+                                                </div>
+                                                <div class="mt-1">
+                                                    @if (string.IsNullOrEmpty(pr.Sale) || pr.Sale == "0")
+                                                    {
+                                                        <span class="product-price"><b>@pr.Price</b><small> @(ViewBag.amd ?? "")</small></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="product-price"><del class="text-muted">@pr.Price</del><b>@pr.Sale</b><small> @(ViewBag.amd ?? "")</small></span>
+                                                    }
+                                                    <div class="star-rating">
+                                                        @for (int i = 0; i < 5; i++)
+                                                        {
+                                                            if (i < pr.Rating)
+                                                            {
+                                                                <i class="las la-star"></i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="las la-star font-weight-light"></i>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer bg-transparent border-0">
+                                                <div class="product-link d-flex align-items-center justify-content-center">
+                                                    <a class="btn btn-compare" asp-controller="Home" asp-action="Checkout" asp-route-id="@pr.Id">
+                                                        @Localizer["Buy Now"]
+                                                    </a>
+                                                    <button class="btn-cart btn btn-primary btn-animated mx-3" type="button" onclick="addToCart(this)">
+                                                        <i class="las la-shopping-cart mr-1"></i>
+                                                    </button>
+
+                                                    <button class="btn btn-view qv" data-toggle="tooltip" data-placement="top" title="@Localizer["Quick View"]" data-id="@pr.Id">
+                                                        <span data-target="#quick-view" data-toggle="modal"><i class="las la-eye"></i></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+
+                    </div>
+                    <div class="row justify-content-center">
+                        <button id="loadMoreProducts" data-index="0" data-min="@minSum" data-max="@maxSum" class="btn btn-primary px-5 mt-5">@Localizer["Load more products"]</button>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-12 sidebar mt-8 mt-lg-0">
+                    <div class="shadow-sm p-5 bg-white">
+                        <div class="widget widget-categories mb-4 pb-4 border-bottom">
+                            <h4 class="widget-title mb-3">@Localizer["Categories"]</h4>
+                            <div id="accordion" class="accordion">
+                                <div class="card border-0 mb-3">
+
+                                    @if (catalog != null)
+                                    {
+                                        if (catalog.Id > 0)
+                                        {
+                                            <div class="card-header">
+                                                <h6 class="mb-0">
+                                                    <a class="link-title" data-toggle="collapse" data-parent="#accordion" asp-action="Products" asp-controller="Home" asp-route-id="@catalog.Id" aria-expanded="true">@CultureData.GetDefoultName(catalog.CultureName, culture, catalog.Name)</a>
+                                                </h6>
+                                            </div>
+                                        }
+                                        if (catalog.ChaildCatalogs != null && catalog.ChaildCatalogs.Count() > 0)
+                                        {
+
+                                            <div id="collapse1" class="collapse show" data-parent="#accordion">
+                                                <div class="card-body text-muted">
+                                                    <ul class="list-unstyled">
+                                                        @foreach (var c in catalog.ChaildCatalogs)
+                                                        {
+                                                            <li>
+                                                                <a asp-action="Products" asp-controller="Home" asp-route-id="@c.Id">@CultureData.GetDefoultName(c.CultureName, culture, c.Name)</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+
+
+                                </div>
+                            </div>
+                        </div>
+                        @{
+                            IEnumerable<string> brands = (IEnumerable<string>)ViewBag.Brands;
+                            string CurrentBrand = (string)ViewBag.CurrentBrand;
+                        }
+                        <div class="widget widget-brand mb-4 pb-4 border-bottom">
+                            @if (brands != null && brands.Count() > 0)
+                            {
+                                <h4 class="widget-title mb-3">@Localizer["Brand"]</h4>
+                                @foreach (var br in brands)
+                                {
+                                    <div class="custom-control custom-checkbox mb-2">
+                                        <a href="javascript:void(0);" class="setBrand@((CurrentBrand==br)?"  font-weight-bold":"")" data-name="@br">@br</a>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div class="widget widget-brand mb-4 pb-4 border-bottom">
+                            <h4 class="widget-title mb-3">@Localizer["Price"]</h4>
+                            <p>
+                                <label for="amount">@Localizer["Price range"]:</label>
+                                <input type="text" id="amount" readonly style="border:0; color:#ffc709; font-weight:bold;">
+                            </p>
+                            <div id="slider-range"></div>
+                        </div>
+                        <form asp-action="Products" asp-controller="Home" method="get" id="formAtributes">
+                            <input type="hidden" name="brand" id="inputBrandId" value="@(!string.IsNullOrEmpty(CurrentBrand)?CurrentBrand:"")" />
+                            @{IEnumerable<int> CurrentAtrVal = (IEnumerable<int>)ViewBag.CurrentAtributes; }
+
+                            @if (Atributes != null && Atributes.Count() > 0)
+                            {
+                                int i = 0;
+                                foreach (var atr in Atributes)
+                                {
+                                    if (atr.Key.Name.ToUpper() == "COLOR")
+                                    {
+                                        <div class="widget widget-color mb-4 pb-4 border-bottom">
+                                            <h4 class="widget-title mb-3">@Localizer["Color"]</h4>
+                                            <ul class="list-inline">
+                                                @{
+                                                    int j = 0;
+                                                }
+                                                @foreach (var av in atr.Value)
+                                                {
+                                                    <li>
+                                                        <div class="form-check pl-0">
+                                                            @if (CurrentAtrVal == null || CurrentAtrVal.Count() == 0 || !CurrentAtrVal.Any(_ => _ == av.Id))
+                                                            {
+                                                                <input type="radio" value="@av.Id" class="form-check-input" id="color-filter@(j)" name="atributeIds[@i]">
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="radio" value="@av.Id" class="form-check-input" id="color-filter@(j)" name="atributeIds[@i]" checked>
+                                                            }
+                                                            <label class="form-check-label" for="color-filter@(j)" data-bg-color="@av.Value"></label>
+                                                        </div> <small>@CultureData.GetDefoultName(av.CultureName, culture, av.Value)</small>
+                                                    </li>
+                                                    j++;
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="widget widget-size">
+                                            <h4 class="widget-title mb-3">@CultureData.GetDefoultName(atr.Key.CultureName, culture, atr.Key.Name)</h4>
+                                            <ul class="list-inline clearfix">
+                                                @{
+                                                    int j = 0;
+                                                }
+                                                @foreach (var av in atr.Value)
+                                                {
+                                                    <li>
+                                                        @if (CurrentAtrVal == null || CurrentAtrVal.Count() == 0 || !CurrentAtrVal.Any(_ => _ == av.Id))
+                                                        {
+                                                            <input value="@av.Id" name="atributeIds[@i]" id="atr@(i)Val@(j)Id" type="radio">
+                                                        }
+                                                        else
+                                                        {
+                                                            <input value="@av.Id" name="atributeIds[@i]" id="atr@(i)Val@(j)Id" type="radio" checked>
+                                                        }
+                                                        <label for="atr@(i)Val@(j)Id">@CultureData.GetDefoultName(av.CultureName, culture, av.Value)</label>
+                                                    </li>
+                                                    j++;
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                    i++;
+                                }
+                            }
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+@section Scripts{
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $( function() {
+            $("#slider-range").slider({
+                range: true,
+                min: @(minSum),
+                max: @(maxSum),
+                step: 1000,
+                values: [ @(minSum), @(maxSum) ],
+                slide: function (event, ui) {
+                    $("#amount").val(ui.values[0] + " - " + ui.values[1] + $.parseHTML(" @(ViewBag.amd ?? "")")[0].data);
+                }
+            });
+            $("#amount").val($("#slider-range").slider("values", 0) +
+                " - " + $("#slider-range").slider("values", 1) + $.parseHTML(" @(ViewBag.amd ?? "")")[0].data);
+            $("#slider-range").slider({
+                change: function (event, ui) {
+                    $('#loadMoreProducts').data('index', -1);
+                    $('#loadMoreProducts').data('min', ui.values[0]);
+                    $('#loadMoreProducts').data('max', ui.values[1]);
+                    $("#productList").empty();
+                    $('#loadMoreProducts').click();
+                }
+            });
+        });
+        $(document).ready(function () {
+            $("#formAtributes input[type='radio']").change(function () { $("#formAtributes").submit(); });
+
+             $('.setBrand').click(function () {
+                 $('#inputBrandId').val($(this).data('name'));
+                 $("#formAtributes input[type='radio']").prop("checked", false);
+                $('#formAtributes').submit();
+             });
+
+            $("#productList").ready(function () {
+                var ids = $.cookie("FavoritIds") && JSON.parse($.cookie("FavoritIds"));
+                var prs = $("#productList .ProductWrapper");
+                if ($.isArray(ids) && prs.length > 0) {
+                    $.each(ids, function (i, at) {
+                        $.each(prs, function (j, pr) {
+                            if (at.id === $(pr).data('id')) {
+                                $(pr).find(".Heart").addClass('HeartSelected');
+                                return false;
+                            }
+                        });
+                    });
+                }
+            });
+            $("#productList").click(function (e) {
+                if ($(e.target).hasClass("Heart") || $(e.target).is('.lar, .la-heart')) {
+                    var el = $(e.target);
+                    if ($(el).is('.lar, .la-heart')) el = $(el).parent();
+                    if ($(el).hasClass("HeartSelected")) {
+                        $(el).removeClass("HeartSelected");
+                        var ids = $.cookie("FavoritIds");
+                        ids = ids && JSON.parse(ids);
+                        if ($.isArray(ids)) {
+                            ids = $.grep(ids, function (at) { return at.id != $(el).parent().data('id'); });
+                            $.cookie("FavoritIds", JSON.stringify(ids), { expires: 365, path: '/' });
+                            ids.length ? (ids.length > 99 ? $('#favoritesWrap small').text('99+') : $('#favoritesWrap small').text(ids.length)) : $('#favoritesWrap small').addClass('d-none');
+                        }
+                    }
+                    else {
+                        $(el).addClass("HeartSelected");
+                        var ids = $.cookie("FavoritIds");
+                        if (!ids) {
+                            ids = [{ id: $(el).parent().data('id'), atrId: $(el).parent().data('atrid') }];
+                            $.cookie("FavoritIds", JSON.stringify(ids), { expires: 365, path: '/'  });
+                            $('#favoritesWrap small').removeClass('d-none').text(1);
+
+                        }
+                        else {
+                            ids = JSON.parse(ids);
+                            if ($.isArray(ids)) {
+                                ids.push({ id: $(el).parent().data('id'), atrId: $(el).parent().data('atrid') });
+                                $.cookie("FavoritIds", JSON.stringify(ids), { expires: 365, path: '/' });
+                                ids.length > 99 ? $('#favoritesWrap small').text('99+') : $('#favoritesWrap small').text(ids.length);
+                                if (ids.length == 1) $('#favoritesWrap small').removeClass('d-none');
+                            }
+                        }
+                    }
+                }
+            });
+             $("#loadMoreProducts").click(function () {
+                $(this).data("index", $(this).data("index") + 1);
+                var req = {
+                    id: "@(catalog?.Id)",
+                    index: $(this).data("index"),
+                    brand: "@CurrentBrand",
+                    min: $(this).data("min"),
+                    max: $(this).data("max"),
+                    atributeIds: $("#formAtributes select option:selected").map(function () { return $(this).val(); }).toArray()
+                 };
+
+                $.ajax({
+                    url: "/Home/Products/",
+                    type: "POST",
+                    contentType: "application/Json",
+                    dataType: "Json",
+                    data: JSON.stringify(req),
+                    beforeSend: function () {
+                        $('#loadMoreProducts').parent().prepend('<div id="AdProductListSpiner" class="text-center mt-4 w-100"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+                    },
+                    success: function (data) {
+                        $("#AdProductListSpiner").remove();
+                        var ids = $.cookie("FavoritIds") && JSON.parse($.cookie("FavoritIds"));
+                        if (data.res && data.res.length) {
+                            $.each(data.res, function (i, pr) {
+                                var set = false;
+                                if ($.isArray(ids)) {
+                                    $.each(ids, function (j, at) {
+                                        if (at.id == pr.id) { set = true; return false; }
+                                    });
+                                }
+                                var heart = '<button class="btn-wishlist btn-sm Heart' + (set ? ' HeartSelected' : '') + '" type="button" data-toggle="tooltip" data-placement="left" title="Add to wishlist"><i class="lar la-heart"></i></button>';
+                                var imgs = '<a class="card-img-hover d-block" href="@(Url.Action("Product","Home"))/' + this.id + '"><img class="card-img-top card-img-back" src="' + (this.imgId ? ('/home/GetProductImg/' + this.imgId + '"') : '//:0"') + '" alt="..."><img class="card-img-top card-img-front" src="' + (this.imgId2 ? ('/home/GetProductImg/' + this.imgId2 + '"') : '//:0"') + '" alt="..."></a>';
+                                var cBody = '<div class="card-body"><div class="product-title"><a class="Product link-title" href="/Home/Product/' + this.id + '">' + this.title + '</a></div><div class="mt-1"><span class="product-price">' + (this.sale && this.sale != '0' ? ('<del class="text-muted">' + this.price + '</del><b> ' + this.sale + '</b>') : ('<b>' + this.price + '</b>')) + '<small>@(ViewBag.amd ?? "")</small></span><div class="star-rating">' + '<i class="las la-star"></i>'.repeat(this.rating) + '<i class="las la-star font-weight-light"></i>'.repeat(5 - this.rating) + '</div></div></div>';
+                                var cFooter = '<div class="card-footer bg-transparent border-0"><div class="product-link d-flex align-items-center justify-content-center"><a class="btn btn-compare" href="/Home/Checkout/'+ this.id+'" >Buy Now</a><button class="btn-cart btn btn-primary btn-animated mx-3" type="button" onclick="addToCart(this)"><i class="las la-shopping-cart mr-1"></i></button><button class="btn btn-view" data-toggle="tooltip" data-placement="top" title="Quick View"><span data-target="#quick-view" data-toggle="modal"><i class="las la-eye"></i></span></button></div></div>';
+                                var pro = $('<div class="col-lg-4 col-md-6 mt-8"><div class="card product-card" data-id="' + this.id + '" data-atrId="">' + heart + imgs + '<div class="card-info">' + cBody + cFooter + '</div></div></div>');
+                                var st = $(document).scrollTop();
+                                $("#productList").append(pro);
+                                $(document).scrollTop(st);
+                            });
+                        }
+                        else {
+                            $(this).data("index", $(this).data("index") - 1);
+                        }
+                    }
+                });
+        });
+        });
+    </script>
+}

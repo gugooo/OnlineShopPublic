@@ -1,0 +1,154 @@
+﻿@model CheckoutViewModel;
+@{
+    ViewData["Title"] = Localizer["Checkout"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using System.Globalization;
+@{
+    string promo = (string)ViewBag.promoCode;
+    decimal value = (decimal)ViewBag.OrderValue;
+    decimal shipping = (decimal)ViewBag.Shipping;
+    decimal promoSale = (decimal)ViewBag.PromoSale;
+}
+<section class="bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="h2 mb-0">@Localizer["Product Checkout"]</h1>
+            </div>
+            <div class="col-md-6 mt-3 mt-md-0">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-md-end bg-transparent p-0 m-0">
+                        <li class="breadcrumb-item">
+                            <a class="text-dark" asp-action="Index" asp-controller="Home"><i class="las la-home mr-1"></i>@Localizer["Home"]</a>
+                        </li>
+                        <li class="breadcrumb-item">@Localizer["Shop"]</li>
+                        <li class="breadcrumb-item active text-primary" aria-current="page">@Localizer["Product Checkout"]</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="page-content">
+
+    <section>
+        <form class="" asp-action="Checkout" asp-controller="Home" method="post" asp-antiforgery="true">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-7 col-md-12">
+                        <div class="checkout-form box-shadow white-bg">
+                            <h2 class="mb-4">@Localizer["Billing Details"]</h2>
+                            <div class="row">
+                                <input class="d-none" asp-for="PromoCode" value="@promo" />
+                                <div asp-validation-summary="All" class="text-danger col-12 m-3"></div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="FirstName">@Localizer["Your name"]</label>
+                                        <input asp-for="FirstName" class="form-control" placeholder="@Localizer["Your name"]">
+                                        <span asp-validation-for="LastName"></span>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6 d-none">
+                                    <div class="form-group">
+                                        <label asp-for="LastName"></label>
+                                        <input asp-for="LastName" class="form-control" placeholder="@Localizer["Your lastname"]">
+                                        <span asp-validation-for="LastName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6 d-none">
+                                    <div class="form-group">
+                                        <label asp-for="Email"></label>
+                                        <input asp-for="Email" class="form-control" placeholder="@Localizer["State Province"]">
+                                        <span asp-validation-for="Email"></span>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Phone"></label>
+                                        <input asp-for="Phone" class="form-control" placeholder="@Localizer["Phone"]">
+                                        <span asp-validation-for="Phone"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Address"></label>
+                                        <input asp-for="Address" class="form-control" placeholder="@Localizer["Enter Your Address"]">
+                                        <span asp-validation-for="Address"></span>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6 d-none">
+                                    <div class="form-group">
+                                        <label asp-for="City"></label>
+                                        <input asp-for="City" class="form-control" placeholder="@Localizer["City"]">
+                                        <span asp-validation-for="City"></span>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6 d-none">
+                                    <div class="form-group mb-md-0">
+                                        <label asp-for="ZIP"></label>
+                                        <input asp-for="ZIP" class="form-control" placeholder="@Localizer["Zip / Postal"]">
+                                        <span asp-validation-for="ZIP"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Description">@Localizer["Notes"]</label>
+                                        <textarea style="height:100px;" asp-for="Description" class="form-control" placeholder="@Localizer["Notes"]"></textarea>
+                                        <span asp-validation-for="Description"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 col-md-12 mt-5 mt-lg-0">
+                        <div class="shadow p-3 p-lg-5">
+                            <div class="p-3 p-lg-5 shadow-sm mb-5">
+                                <h3 class="mb-3">
+                                    @Localizer["Your Order"]
+                                </h3>
+
+                                    <ul class="list-unstyled">
+                                        <li class="mb-3 border-bottom pb-3"><span> @Localizer["Order Value"] :</span> @((value * (1 - promoSale / 100)).ToString("N", new CultureInfo("en")).Replace(".00", "")) <small class="pl-1" style="line-height:24px;"> @(ViewBag.amd ?? "")</small></li>
+                                        <li class="mb-3 border-bottom pb-3"><span> @Localizer["Shipping"] :</span> @shipping.ToString("N", new CultureInfo("en")).Replace(".00", "") <small class="pl-1" style="line-height:24px;">@(ViewBag.amd ?? "")</small></li>
+                                        <li>
+                                            <span><strong class="cart-total"> @Localizer["Total"] :</strong></span>  <strong class="cart-total"> @((value * (1 - promoSale / 100) + shipping).ToString("N", new CultureInfo("en")).Replace(".00", "")) <small class="pl-1" style="line-height:24px;">@(ViewBag.amd ?? "")</small></strong>
+                                        </li>
+                                    </ul>
+                            </div>
+                            <div class="cart-detail my-5">
+                                <h3 class="mb-3">
+                                    @Localizer["Payment Method"]
+                                </h3>
+
+                                <div class="form-group">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" asp-for="Payment" id="PaymentCash" value="Cash" class="custom-control-input" checked>
+                                        <label class="custom-control-label" for="PaymentCash">@Localizer["Cash"]</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" asp-for="Payment" id="PaymentIdram" value="Idram" class="custom-control-input">
+                                        <label class="custom-control-label" for="PaymentIdram">@Localizer["Idram"]</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" asp-for="Payment" id="PaymentCard" value="Card" class="custom-control-input">
+                                        <label class="custom-control-label" for="PaymentCard">@Localizer["Card"]</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="submit" class="btn btn-primary btn-animated btn-block" value="@Localizer["Proceed to Payment"]">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </section>
+
+</div>
